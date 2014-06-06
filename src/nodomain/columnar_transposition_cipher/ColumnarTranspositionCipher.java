@@ -3,24 +3,30 @@ package nodomain.columnar_transposition_cipher;
 public class ColumnarTranspositionCipher {
 		
 	/**
-	 * Encrypted message
-	 * @param message
+	 * Builds encrypted message
+	 * @param Message
 	 * @return Encrypted message with correct keyword to decrypt
 	 */
 	public Message encryptMessage(Message message) {
 		StringBuilder encryptedText = new StringBuilder();
+						
+		Message messageNoWhitespaces = removeWhitespaces(message);
 		
 		int[] keywordPermutation = getKeywordPermutationByAlphabeticalOrder(message.getKeyword());	
 		Debug.printIntArray(keywordPermutation);
 		
-		char[][] grid = getTranspositionGrid(message.getText(), message.getKeyword());
+		char[][] grid = getTranspositionGridForMessageEncryption(messageNoWhitespaces);
+		fillTranspositionGrid(grid, messageNoWhitespaces);
 		Debug.print2DCharArray(grid);
 		
-		for(int permutationIndex = 0; permutationIndex < keywordPermutation.length; permutationIndex++){
-			int x = keywordPermutation[permutationIndex];			
-			for(int y = 0; y < grid[x].length; y++){
-				if(grid[x][y] != 0){
-					encryptedText.append(grid[x][y]);
+		for(int permutation = 0; permutation < keywordPermutation.length; permutation++){			
+			for(int x = 0; x < keywordPermutation.length; x++){
+				if(keywordPermutation[x] == permutation){
+					for(int y = 0; y < grid[x].length; y++){
+						if(grid[x][y] != 0){
+							encryptedText.append(grid[x][y]);
+						}
+					}
 				}
 			}
 			encryptedText.append(" ");
@@ -40,15 +46,49 @@ public class ColumnarTranspositionCipher {
 		
 		return new Message(encryptedText.toString(), message.getKeyword());
 	}
-	public Message decryptMessage(Message decryptableMessage) {
-		StringBuilder decryptedText = new StringBuilder();
-		
-		return new Message(decryptedText.toString(), decryptableMessage.getKeyword());
+	public Message removeWhitespaces(Message message){	
+		return new Message(message.getText().replaceAll("\\s", ""), message.getKeyword());		
 	}
 	/**
-	 * Keyword permutation by alphabetical order
-	 * @param keyword "acb"
-	 * @return int[]{1,3,2}
+	 * Builds decrypted message
+	 * @param message
+	 * @return Decrypted message with keyword that was used to decrypt
+	 */
+	public Message decryptMessage(Message message) {
+		StringBuilder decryptedText = new StringBuilder();
+		
+		Message messageNoWhitespaces = removeWhitespaces(message);
+		
+		int[] keywordPermutation = getKeywordPermutationByAlphabeticalOrder(message.getKeyword());	
+		Debug.printIntArray(keywordPermutation);
+		
+		char[][] grid = getTranspositionGridForMessageEncryption(messageNoWhitespaces);	
+		
+		String[] textBlocks = message.getText().split(" ");
+
+		for(int permutation = 0; permutation < keywordPermutation.length; permutation++){		
+			for(int x = 0; x < keywordPermutation.length; x++){
+				if(keywordPermutation[x] == permutation){
+					for(int y = 0; y < textBlocks[permutation].length(); y++){
+						grid[x][y] = textBlocks[permutation].charAt(y);						
+					}	
+				}
+			}		
+		}
+		
+		Debug.print2DCharArray(grid);
+		for(int y = 0; y < grid[0].length; y++){
+			for(int x = 0; x < grid.length; x++){
+				decryptedText.append(grid[x][y]);
+			}
+		}
+		
+		return new Message(decryptedText.toString(), message.getKeyword());
+	}
+	/**
+	 * Builds array containing keyword permutation by alphabetical order
+	 * @param Keyword
+	 * @return int[] permutation from keyword
 	 */
 	private int[] getKeywordPermutationByAlphabeticalOrder(String keyword){
 		int[] keywordPermutation = new int[keyword.length()];
@@ -70,10 +110,10 @@ public class ColumnarTranspositionCipher {
 		return keywordPermutation;		
 	}
 	/**
-	 * Alphabet index in text
-	 * @param alphabet
-	 * @param text
-	 * @return index or -1 if no alphabet found
+	 * Get alphabet index in text
+	 * @param Alphabet
+	 * @param Text
+	 * @return Index or -1 if no alphabet found
 	 */
 	private int alphabetIndex(char alphabet, String text){
 		int index;
@@ -85,34 +125,35 @@ public class ColumnarTranspositionCipher {
 		return -1;
 	}
 	/**
-	 * Transposition grid
-	 * @param text abcabca
-	 * @param keywordLenght 4
-	 * @return {
-	 * 			abc,
-	 * 			abc, 
-	 * 			a00
-	 * 			}
-	 */	
-	private char[][] getTranspositionGrid(String text, String keyword) {	
-		String textNoWhitespaces = text.replaceAll("\\s", "");		
-		int width = keyword.length();					
-		double height = Math.ceil((double)textNoWhitespaces.length() / (double)width);	
-		char[][] textGrid = new char[width][(int)height];		
-		
+	 * Fill message text to transposition grid
+	 * @param Grid
+	 * @param Message
+	 */
+	private void fillTranspositionGrid(char[][] grid, Message message){				
 		int index = 0;		
-		for(int y = 0; y < height; y++){
-			for(int x = 0; x < width; x++){
-				if(index < textNoWhitespaces.length()){										
-					textGrid[x][y] = textNoWhitespaces.charAt(index);
+		for(int y = 0; y < grid[0].length; y++){
+			for(int x = 0; x < grid.length; x++){
+				if(index < message.getText().length()){										
+					grid[x][y] = message.getText().charAt(index);
 				}
 				else{
-					textGrid[x][y] = 0;
+					grid[x][y] = 0;
 				}
 				index++;
 			}
-		}		
+		}	
+	}
+	/**
+	 * Transposition grid for message encryption
+	 * @param Message
+	 * @return Correct size of grid for message text
+	 */	
+	private char[][] getTranspositionGridForMessageEncryption(Message message) {		
+		int width = message.getKeyword().length();					
+		double height = Math.ceil((double)message.getText().length() / (double)width);	
 		
+		char[][] textGrid = new char[width][(int)height];	
+
 		return textGrid;
 	}
 }
