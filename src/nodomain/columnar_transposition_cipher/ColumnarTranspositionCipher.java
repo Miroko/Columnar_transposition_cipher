@@ -1,6 +1,6 @@
 package nodomain.columnar_transposition_cipher;
 
-public class TranspositionCipher {
+public class ColumnarTranspositionCipher {
 		
 	/**
 	 * Encrypted message
@@ -94,16 +94,17 @@ public class TranspositionCipher {
 	 * 			a00
 	 * 			}
 	 */	
-	private char[][] getTranspositionGrid(String text, String keyword) {
+	private char[][] getTranspositionGrid(String text, String keyword) {	
+		String textNoWhitespaces = text.replaceAll("\\s", "");		
 		int width = keyword.length();					
-		double height = Math.ceil((double)text.length() / (double)width);	
+		double height = Math.ceil((double)textNoWhitespaces.length() / (double)width);	
 		char[][] textGrid = new char[width][(int)height];		
 		
 		int index = 0;		
 		for(int y = 0; y < height; y++){
 			for(int x = 0; x < width; x++){
-				if(index < text.length()){
-					textGrid[x][y] = text.charAt(index);
+				if(index < textNoWhitespaces.length()){										
+					textGrid[x][y] = textNoWhitespaces.charAt(index);
 				}
 				else{
 					textGrid[x][y] = 0;

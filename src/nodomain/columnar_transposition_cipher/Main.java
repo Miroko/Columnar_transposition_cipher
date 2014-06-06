@@ -4,7 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		TranspositionCipher transpositionCipher = new TranspositionCipher();		
+		ColumnarTranspositionCipher transpositionCipher = new ColumnarTranspositionCipher();		
 
 		String keyword = "debug";
 		String text = "this is a test";			
