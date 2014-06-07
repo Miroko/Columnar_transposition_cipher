@@ -1,7 +1,60 @@
 package nodomain.columnar_transposition_cipher;
 
-public class ColumnarTranspositionCipher {
-		
+/**
+ * Columnar transposition cipher
+ * 
+ */
+public class ColumnarTranspositionCipher {		
+	/**
+	 * Keyword: DEBUG
+	 * Text: THIS IS A TEST
+	 * 
+	 * Encryption:
+	 * 
+	 * Alphabetical permutation from keyword 
+	 * Permutation: 12043
+	 * 
+	 * [1][2][0][4][3]
+	 * [T][H][I][S][I]
+	 * [S][A][T][E][S]
+	 * [T][0][0][0][0]
+	 * 
+	 * Encryption order: 0 -> 4
+	 * Encrypted text: IT TST HA IS SE
+	 * 
+	 * Decryption:
+	 * 
+	 * Alphabetical permutation from keyword 
+	 * Permutation: 12043
+	 * 
+	 * [1][2][0][4][3]
+	 * [ ][ ][ ][ ][ ]
+	 * [ ][ ][ ][ ][ ]
+	 * [ ][ ][ ][ ][ ]
+	 * 
+	 * Decryption order: Text left to right to columns 0 -> 4
+	 * 
+	 * Index: 0
+	 * 
+	 * [1][2][0][4][3]
+	 * [ ][ ][I][ ][ ]
+	 * [ ][ ][T][ ][ ]
+	 * [ ][ ][0][ ][ ]
+	 * 
+	 * Index: 1
+	 * 
+	 * [1][2][0][4][3]
+	 * [T][ ][I][ ][ ]
+	 * [S][ ][T][ ][ ]
+	 * [T][ ][0][ ][ ]
+	 * 
+	 * etc.
+	 * 
+	 * Read left to right from grid
+	 * Decrypted text: THISISATEST
+	 * 
+	 */
+	
 	/**
 	 * Builds encrypted message
 	 * @param Message
@@ -46,6 +99,11 @@ public class ColumnarTranspositionCipher {
 		
 		return new Message(encryptedText.toString(), message.getKeyword());
 	}
+	/**
+	 * Remove whitespaces from message
+	 * @param Message
+	 * @return Message without whitespaces
+	 */
 	public Message removeWhitespaces(Message message){	
 		return new Message(message.getText().replaceAll("\\s", ""), message.getKeyword());		
 	}
