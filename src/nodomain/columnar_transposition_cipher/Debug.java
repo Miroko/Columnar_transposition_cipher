@@ -8,6 +8,7 @@ public class Debug {
 		}
 		System.out.println();
 	}
+	
 	public static void print2DCharArray(char[][] array){		
 		for(int y = 0; y < array[0].length; y++){			
 			for(int x = 0; x < array.length; x++){				

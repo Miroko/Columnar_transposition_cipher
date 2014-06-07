@@ -83,18 +83,6 @@ public class ColumnarTranspositionCipher {
 				}
 			}
 			encryptedText.append(" ");
-			
-			//  0  2  1  | permutation = x
-			// [a][b][c] |
-			// [a][b][c] v
-			// [a][0][0]
-			
-			// 0 = aa
-			// 1 = cc
-			// 2 = bb
-			
-			// x	     0      1      2
-			// string = "aaa+" "+cc+" "+bb"		
 		}
 		
 		return new Message(encryptedText.toString(), message.getKeyword());
